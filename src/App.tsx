@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import chroma from "chroma-js";
-import { /*Palette,*/ Shuffle, Plus, Save, /*Settings,*/ Check, Copy, X } from "lucide-react";
+import { /*Palette,*/ Shuffle, /*Plus,*/ /*Save,*/ /*Settings,*/ Check, Copy, X } from "lucide-react";
 import { NAMED_COLORS } from "../src/lib/constants";
 
 // --- Type Definitions ---
@@ -59,7 +59,7 @@ const App = () => {
   const [baseColorName, setBaseColorName] = useState("Indigo");
 
   const [secondaryColor, setSecondaryColor] = useState("#f59e0b");
-  const [showSecondary, setShowSecondary] = useState(false);
+  const [showSecondary /*setShowSecondary*/] = useState(false);
   const [secondaryScale, setSecondaryScale] = useState<ColorScale>([]);
   const [secondaryColorName, setSecondaryColorName] = useState("Amber");
 
@@ -312,49 +312,67 @@ const App = () => {
       </header> */}
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-0 py-12 flex flex-col justify-center items-center min-h-screen">
         {/* Hero Section */}
-        <div className="text-left mb-12 flex justify-between">
-          <div className="max-w-3xl mx-0">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">Tintwind</h1>
-            <h2 className="text-2xl font-medium text-gray-900 mb-4">Tailwind 4 CSS Colour Generator</h2>
-            <p className="text-base text-gray-600 mb-8">Instantly create Tailwind 4 OKLCH colour scales.</p>
+        <div className="text-left mb-2 flex justify-between px-2 w-full">
+          <div className="mx-0">
+            <h1 className="text-5xl font-semibold tracking-tight text-gray-900 mb-4">Tintwind</h1>
+            <h2 className="text-base font-normal text-gray-500 mb-4">Tailwind 4 OKLCH Colour Scales Generator</h2>
+            {/* <p className="text-base text-gray-600 mb-8">Instantly create Tailwind 4 OKLCH colour scales.</p> */}
           </div>
 
-          <div className="flex flex-col items-center p-8">
+          <div className="flex flex-col items-center p-4 w-fit">
             {/* Color Input (omitted for brevity, no changes needed) */}
-            <div className="flex items-center justify-center gap-4 mb-6 flex-wrap">
-              <div className="relative">
+            <div className="flex items-center gap-4 mb-6 flex-wrap w-full justify-end">
+              {/* Base Color Input */}
+              <div className="relative border border-gray-200 hover:border-gray-200 bg-white items-left flex rounded-xl max-w-36 p-2">
+                <div className="rounded-xl overflow-hidden p-0 bg-white w-full max-w-12">
+                  <input
+                    type="color"
+                    value={baseColor}
+                    onChange={(e) => setBaseColor(e.target.value)}
+                    className="transition-colors bg-transparent p-2 w-12 h-12 overflow-hidden appearance-none absolute top-1/2 transform -translate-y-1/2 rounded-full border-none cursor-pointer"
+                    aria-label="Base color picker"
+                  />
+                </div>
                 <input
-                  type="color"
+                  type="text"
                   value={baseColor}
                   onChange={(e) => setBaseColor(e.target.value)}
-                  className="w-16 h-16 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-200 transition-colors bg-white p-2"
-                  aria-label="Base color picker"
+                  className="py-2 rounded-lg ml-1 font-normal w-full text-left bg-transparent focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-colors"
+                  placeholder="#6366f1"
+                  aria-label="Base color hex value"
                 />
               </div>
-              <input
-                type="text"
-                value={baseColor}
-                onChange={(e) => setBaseColor(e.target.value)}
-                className="px-4 py-4 h-18 border border-gray-300 rounded-lg text-lg font-mono w-40 text-center focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-colors"
-                placeholder="#6366f1"
-                aria-label="Base color hex value"
-              />
-              <button
-                onClick={generateRandomColor}
-                tabIndex={0}
-                onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && generateRandomColor()}
-                aria-label="Generate random color (Spacebar)"
-                className="flex items-center gap-2 text-zinc-900 border border-zinc-400 px-4 py-4 rounded-lg hover:bg-gray-100  transition-colors font-medium"
-              >
-                <Shuffle className="w-5 h-5" />
-                Generate random
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={generateRandomColor}
+                  tabIndex={0}
+                  onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && generateRandomColor()}
+                  aria-label="Generate random color (Spacebar)"
+                  className="flex items-center gap-2 text-zinc-600 border border-gray-200 hover:border-gray-200 px-4 py-4 rounded-lg hover:bg-gray-100 transition-colors font-medium bg-white"
+                >
+                  <Shuffle className="w-5 h-5" />
+                  Generate random
+                </button>
+                <button
+                  onClick={handleExportCss}
+                  tabIndex={0}
+                  onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && handleExportCss()}
+                  className="flex items-center gap-2 h-full max-h-14 bg-white border border-gray-200 hover:border-gray-200 text-zinc-600 px-6 py-4 rounded-lg hover:bg-gray-100 transition-colors font-medium"
+                  disabled={colorScale.length !== SCALE_STEPS.length}
+                >
+                  <Copy className="w-4 h-4" />
+                  Export CSS
+                </button>
+              </div>
             </div>
             {/* Controls (omitted for brevity, no changes needed) */}
-            <div className="flex items-start justify-start gap-6 flex-wrap">
-              <button
+            {/**
+             // *  TODO: Move secondary color controls from here */}
+
+            <div className="flex items-end justify-end gap-6 flex-wrap w-full">
+              {/* <button
                 onClick={() => setShowSecondary(!showSecondary)}
                 tabIndex={0}
                 onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && setShowSecondary(!showSecondary)}
@@ -364,7 +382,7 @@ const App = () => {
               >
                 <Plus className="w-4 h-4" />
                 {showSecondary ? "Remove secondary color scale" : "Add secondary color scale"}
-              </button>
+              </button> */}
               {/* <div className="flex items-center gap-2">
                 <label htmlFor="color-scheme-select" className="text-sm text-gray-600">
                   Color combination scheme
@@ -382,11 +400,11 @@ const App = () => {
         </div>
 
         {/* Color Palette Display - UPDATED */}
-        <div className="bg-white rounded-xl shadow-lg p-8 mb-8">
+        <div className="bg-white rounded-2xl shadow-sm mb-8 p-12 pt-4 w-full">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-3xl font-bold text-gray-900">Palette</h2>
+            {/* <h2 className="text-3xl font-medium text-gray-900">Palette</h2> */}
             <div className="flex gap-4">
-              <button
+              {/* <button
                 onClick={handleExportCss}
                 tabIndex={0}
                 onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && handleExportCss()}
@@ -395,7 +413,7 @@ const App = () => {
               >
                 <Copy className="w-4 h-4" />
                 Export CSS
-              </button>
+              </button> */}
               {/* <button className="flex items-center gap-2 bg-slate-900 text-white px-4 py-2 rounded-lg hover:bg-slate-700 transition-colors font-medium">
                 <Save className="w-4 h-4" />
                 Save palette
@@ -404,14 +422,16 @@ const App = () => {
           </div>
 
           {/* Main Color Scale */}
-          <h3 className="text-xl font-semibold text-gray-800 mb-4">
-            Primary Scale: <span className="text-slate-900">{baseColorName}</span>
+          <h3 className="text-3xl font-semibold text-gray-400 mb-4">
+            <span className="text-slate-700">{baseColorName}</span>
           </h3>
           <div className="grid grid-cols-5 md:grid-cols-10 gap-3 mb-8">
             {colorScale.map((colorData, index) => (
               <div key={index} className="group">
+                {/* Scale steps */}
+                <div className="text-base text-gray-500 mt-1 text-center mb-2">{SCALE_STEPS[index]}</div>
                 <div
-                  className="aspect-square rounded-xl cursor-pointer shadow-md hover:shadow-xl transition-all duration-200 group-hover:scale-105 transform border border-gray-200 relative"
+                  className="aspect-square rounded-xl cursor-pointer shadow-sm hover:shadow-md transition-all duration-200 group-hover:scale-100 transform border border-gray-200 relative"
                   style={{ backgroundColor: colorData.hex }}
                   onClick={() => copyToClipboard(colorData.hex)}
                   title={`Click to copy ${colorData.hex}`}
@@ -429,11 +449,12 @@ const App = () => {
                   </div>
                 </div>
                 <div className="text-center mt-3">
-                  <div className="text-xs font-mono text-gray-700 font-medium">{colorData.hex.toUpperCase()}</div>
-                  <div className="text-xs text-gray-500 mt-1">{SCALE_STEPS[index]}</div>
-                  <div className="text-[10px] text-gray-400 mt-1 truncate" title={colorData.oklch}>
-                    {colorData.oklch.split("(")[1]?.split(" ")[0]}
-                  </div>
+                  {/* Color HEX */}
+                  <div className="text-base font-mono text-gray-700 font-medium">{colorData.hex.toUpperCase()}</div>
+                  {/* Color OKLCH */}
+                  {/* <div className="text-[10px] text-gray-400 mt-1 truncate" title={colorData.oklch}>
+                    {colorData.oklch}
+                  </div> */}
                 </div>
               </div>
             ))}
@@ -487,83 +508,15 @@ const App = () => {
                     <div className="text-left mt-3">
                       <div className="text-xs font-mono text-gray-700 font-medium">{colorData.hex.toUpperCase()}</div>
                       <div className="text-xs text-gray-500 mt-1">{SCALE_STEPS[index]}</div>
-                      <div className="text-[10px] text-gray-400 mt-1 truncate" title={colorData.oklch}>
+                      {/* <div className="text-[10px] text-gray-400 mt-1 truncate" title={colorData.oklch}>
                         {colorData.oklch.split("(")[1]?.split(" ")[0]}
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 ))}
               </div>
             </div>
           )}
-        </div>
-
-        {/* Usage Examples - UPDATED to reflect color name */}
-        <div className="bg-white rounded-xl shadow-lg p-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">UI Examples</h2>
-          <p className="text-sm text-gray-600 mb-4">
-            Using:{" "}
-            <span className="font-semibold">
-              <span className="lowercase">{baseColorName}</span>-500
-            </span>{" "}
-            and{" "}
-            <span className="font-semibold">
-              <span className="lowercase">{baseColorName}-50</span>
-            </span>{" "}
-            {/* (index 0) */}
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-5xl">
-            {/* Button Examples */}
-            <div className="space-y-3">
-              <h3 className="font-semibold text-gray-700">Buttons</h3>
-              <div className="space-x-2 h-full">
-                <button
-                  className="px-4 py-3 rounded-lg text-white font-medium h-fit"
-                  style={{
-                    backgroundColor: colorScale[5] ? colorScale[5].hex : "#6366f1",
-                  }}
-                >
-                  Primary Button
-                </button>
-                <button
-                  className="px-4 py-3 rounded-lg border-2 font-medium h-fit"
-                  style={{
-                    borderColor: colorScale[5] ? colorScale[5].hex : "#6366f1",
-                    color: colorScale[5] ? colorScale[5].hex : "#6366f1",
-                  }}
-                >
-                  Outline Button
-                </button>
-              </div>
-            </div>
-
-            {/* Card Example */}
-            <div className="space-y-3">
-              <h3 className="font-semibold text-gray-700">Cards</h3>
-              <div
-                className="p-4 rounded-none border-l-4"
-                style={{
-                  borderLeftColor: colorScale[5] ? colorScale[5].hex : "#6366f1",
-                  backgroundColor: colorScale[0] ? colorScale[0].hex : "#f0f3ff",
-                }}
-              >
-                <p className="text-gray-700">Card with accent border</p>
-              </div>
-            </div>
-
-            {/* Badge Examples */}
-            {/* <div className="space-y-3">
-              <h3 className="font-semibold text-gray-700">Badges</h3>
-              <span
-                className="inline-block px-3 py-1 rounded-full text-sm font-medium text-white"
-                style={{
-                  backgroundColor: colorScale[5] ? colorScale[5].hex : "#6366f1",
-                }}
-              >
-                Badge
-              </span>
-            </div> */}
-          </div>
         </div>
       </main>
 
