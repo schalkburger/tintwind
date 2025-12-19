@@ -223,7 +223,7 @@ const App = () => {
 
   // --- Render ---
   return (
-    <main className="min-h-screen bg-gray-50 dark:bg-cod-gray-900">
+    <main className="min-h-screen bg-gray-50 dark:bg-bunker-900">
       {/* Export Modal */}
       {showExportModal && (
         <div
@@ -235,7 +235,7 @@ const App = () => {
         >
           <div className="bg-white rounded-xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto dark:bg-black" onClick={(e) => e.stopPropagation()} role="document">
             {/* Modal Header */}
-            <div className="flex justify-between items-center p-6 border-b dark:border-b-cod-gray-900">
+            <div className="flex justify-between items-center p-6 border-b dark:border-b-bunker-900">
               <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Export Tailwind CSS v4 Theme</h2>
               <button
                 onClick={() => setShowExportModal(false)}
@@ -252,7 +252,7 @@ const App = () => {
             <div className="p-6">
               <p className="text-gray-700 mb-4 text-sm dark:text-gray-100">Copy the following CSS and paste it into your Tailwind CSS configuration file to use your custom colors in OKLCH format.</p>
               <div className="relative">
-                <pre className="bg-gray-900 dark:bg-cod-gray-800 text-white p-4 rounded-lg overflow-x-auto text-sm font-mono whitespace-pre-wrap max-h-96">{exportCode}</pre>
+                <pre className="bg-gray-900 dark:bg-bunker-800 text-white p-4 rounded-lg overflow-x-auto text-sm font-mono whitespace-pre-wrap max-h-96">{exportCode}</pre>
                 <button
                   onClick={() => copyToClipboard(exportCode)}
                   className="absolute top-2 right-2 p-2 rounded-lg bg-slate-900/70 hover:bg-slate-900 transition-colors text-white flex items-center gap-1 font-medium text-xs"
@@ -286,7 +286,7 @@ const App = () => {
         <div className="text-left mb-2 flex justify-between px-2 w-full">
           <div className="mx-0">
             <h1 className="text-5xl font-semibold tracking-tight text-gray-900 mb-4 dark:text-gray-100">Tintwind</h1>
-            <h2 className="text-base font-normal text-gray-500 mb-4 dark:text-cod-gray-300">Tailwind 4 OKLCH Colour Scales Generator</h2>
+            <h2 className="text-base font-normal text-gray-500 mb-4 dark:text-bunker-100">Tailwind 4 OKLCH Colour Scales Generator</h2>
             {/* <p className="text-base text-gray-600 mb-8">Instantly create Tailwind 4 OKLCH colour scales.</p> */}
           </div>
 
@@ -338,69 +338,20 @@ const App = () => {
                 </button>
               </div>
             </div>
-            {/* Controls (omitted for brevity, no changes needed) */}
-            {/**
-             // *  TODO: Move secondary color controls from here */}
-
-            <div className="flex items-end justify-end gap-6 flex-wrap w-full">
-              {/* <button
-                onClick={() => setShowSecondary(!showSecondary)}
-                tabIndex={0}
-                onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && setShowSecondary(!showSecondary)}
-                className="flex items-center gap-2 text-zinc-900 hover:text-zinc-950 font-medium transition-colors"
-                aria-expanded={showSecondary}
-                aria-controls="secondary-scale-controls"
-              >
-                <Plus className="w-4 h-4" />
-                {showSecondary ? "Remove secondary color scale" : "Add secondary color scale"}
-              </button> */}
-              {/* <div className="flex items-center gap-2">
-                <label htmlFor="color-scheme-select" className="text-sm text-gray-600">
-                  Color combination scheme
-                </label>
-                <select id="color-scheme-select" className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-hidden">
-                  <option>auto</option>
-                  <option>Monochromatic</option>
-                  <option>Analogous</option>
-                  <option>Complementary</option>
-                  <option>Triadic</option>
-                </select>
-              </div> */}
-            </div>
           </div>
         </div>
 
         {/* Color Palette Display - UPDATED */}
-        <div className="bg-white dark:bg-cod-gray-950 rounded-2xl shadow-xs mb-8 p-12 pt-4 w-full">
-          <div className="flex items-center justify-between mb-6">
-            {/* <h2 className="text-3xl font-medium text-gray-900">Palette</h2> */}
-            <div className="flex gap-4">
-              {/* <button
-                onClick={handleExportCss}
-                tabIndex={0}
-                onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && handleExportCss()}
-                className="flex items-center gap-2 h-full max-h-14 bg-white border border-zinc-400 text-gray-800 px-6 py-4 rounded-lg hover:bg-gray-100 transition-colors font-medium"
-                disabled={colorScale.length !== SCALE_STEPS.length}
-              >
-                <Copy className="w-4 h-4" />
-                Export CSS
-              </button> */}
-              {/* <button className="flex items-center gap-2 bg-slate-900 text-white px-4 py-2 rounded-lg hover:bg-slate-700 transition-colors font-medium">
-                <Save className="w-4 h-4" />
-                Save palette
-              </button> */}
-            </div>
-          </div>
-
+        <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xs mb-8 p-12 pt-12 w-full">
           {/* Main Color Scale */}
           <h3 className="text-3xl font-semibold text-gray-400 mb-4">
-            <span className="text-slate-700 dark:text-cod-gray-200">{baseColorName}</span>
+            <span className="text-slate-700 dark:text-bunker-100">{baseColorName}</span>
           </h3>
           <div className="grid grid-cols-5 md:grid-cols-10 gap-3 mb-8">
             {colorScale.map((colorData, index) => (
               <div key={index} className="group">
                 {/* Scale steps */}
-                <div className="text-base text-gray-500 dark:text-cod-gray-200 mt-1 text-center mb-2">{SCALE_STEPS[index]}</div>
+                <div className="text-base text-gray-500 dark:text-bunker-200 mt-1 text-center mb-2">{SCALE_STEPS[index]}</div>
                 <div
                   className="aspect-square rounded-xl cursor-pointer shadow-xs hover:shadow-md transition-all duration-200 group-hover:scale-100 transform border border-gray-200 relative"
                   style={{ backgroundColor: colorData.hex }}
@@ -421,7 +372,7 @@ const App = () => {
                 </div>
                 <div className="text-center mt-3">
                   {/* Color HEX */}
-                  <div className="text-base font-mono text-gray-700 dark:text-cod-gray-200 font-medium">{colorData.hex.toUpperCase()}</div>
+                  <div className="text-base font-mono text-gray-700 dark:text-bunker-100 font-medium">{colorData.hex.toUpperCase()}</div>
                   {/* Color OKLCH */}
                   {/* <div className="text-[10px] text-gray-400 mt-1 truncate" title={colorData.oklch}>
                     {colorData.oklch}
@@ -490,30 +441,6 @@ const App = () => {
           )}
         </div>
       </main>
-
-      {/* Footer (omitted for brevity, no changes needed) */}
-      {/* <footer className="bg-white border-t mt-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-6 text-sm text-gray-600">
-              <span>Feedback</span>
-              <a href="#" className="hover:text-slate-900 transition-colors">
-                @erikdevries_nl
-              </a>
-              <a href="#" className="hover:text-slate-900 transition-colors">
-                Privacy Policy
-              </a>
-              <a href="#" className="hover:text-slate-900 transition-colors">
-                API
-              </a>
-              <a href="#" className="hover:text-slate-900 transition-colors">
-                Tailwind Colors
-              </a>
-            </div>
-            <div className="text-sm text-gray-500">Made with ❤️ for designers and developers</div>
-          </div>
-        </div>
-      </footer> */}
     </main>
   );
 };
