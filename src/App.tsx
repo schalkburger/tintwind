@@ -223,26 +223,26 @@ const App = () => {
 
   // --- Render ---
   return (
-    <main className="min-h-screen bg-gray-50 dark:bg-cod-gray-950">
+    <main className="min-h-screen bg-gray-50 dark:bg-cod-gray-900">
       {/* Export Modal */}
       {showExportModal && (
         <div
           tabIndex={-1} // Modal container handles focus trap logic if fully implemented, -1 is fine for simple overlay
           aria-modal="true"
           role="dialog"
-          className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4 backdrop-blur-xs"
           onClick={() => setShowExportModal(false)}
         >
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()} role="document">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto dark:bg-black" onClick={(e) => e.stopPropagation()} role="document">
             {/* Modal Header */}
-            <div className="flex justify-between items-center p-6 border-b">
-              <h2 className="text-xl font-bold text-gray-900">Export Tailwind CSS v4 Theme</h2>
+            <div className="flex justify-between items-center p-6 border-b dark:border-b-cod-gray-900">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Export Tailwind CSS v4 Theme</h2>
               <button
                 onClick={() => setShowExportModal(false)}
                 aria-label="Close export modal"
                 tabIndex={0}
                 onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && setShowExportModal(false)}
-                className="p-2 rounded-full text-gray-400 hover:text-gray-600 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="p-2 rounded-full text-gray-400 hover:text-gray-600 transition-colors focus:outline-hidden focus:ring-2 focus:ring-indigo-500"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -250,9 +250,9 @@ const App = () => {
 
             {/* Modal Body */}
             <div className="p-6">
-              <p className="text-gray-700 mb-4 text-sm">Copy the following CSS and paste it into your Tailwind CSS configuration file to use your custom colors in Oklch format.</p>
+              <p className="text-gray-700 mb-4 text-sm dark:text-gray-100">Copy the following CSS and paste it into your Tailwind CSS configuration file to use your custom colors in OKLCH format.</p>
               <div className="relative">
-                <pre className="bg-gray-900 text-white p-4 rounded-lg overflow-x-auto text-sm font-mono whitespace-pre-wrap max-h-96">{exportCode}</pre>
+                <pre className="bg-gray-900 dark:bg-cod-gray-800 text-white p-4 rounded-lg overflow-x-auto text-sm font-mono whitespace-pre-wrap max-h-96">{exportCode}</pre>
                 <button
                   onClick={() => copyToClipboard(exportCode)}
                   className="absolute top-2 right-2 p-2 rounded-lg bg-slate-900/70 hover:bg-slate-900 transition-colors text-white flex items-center gap-1 font-medium text-xs"
@@ -280,44 +280,13 @@ const App = () => {
         </div>
       )}
 
-      {/* Header (omitted for brevity, no changes needed) */}
-      {/* <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-8">
-              <div className="flex items-center space-x-2">
-                <Palette className="w-8 h-8 text-slate-900" />
-                <span className="text-xl font-bold text-gray-900">Tintwind</span>
-              </div>
-              <nav className="hidden md:flex space-x-6">
-                <a href="#" className="text-gray-900 hover:text-slate-900 font-medium">
-                  Generate
-                </a>
-                <a href="#" className="text-gray-600 hover:text-slate-900">
-                  My palettes
-                </a>
-                <a href="#" className="text-gray-600 hover:text-slate-900">
-                  Tailwind Colors
-                </a>
-              </nav>
-            </div>
-            <div className="flex items-center space-x-4">
-              <button className="text-gray-600 hover:text-slate-900" aria-label="Settings" tabIndex={0}>
-                <Settings className="w-5 h-5" />
-              </button>
-              <button className="bg-slate-900 text-white px-4 py-2 rounded-lg hover:bg-slate-700 transition-colors font-medium">Sign in</button>
-            </div>
-          </div>
-        </div>
-      </header> */}
-
       {/* Main Content */}
       <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-0 py-12 flex flex-col justify-center items-center min-h-screen">
         {/* Hero Section */}
         <div className="text-left mb-2 flex justify-between px-2 w-full">
           <div className="mx-0">
             <h1 className="text-5xl font-semibold tracking-tight text-gray-900 mb-4 dark:text-gray-100">Tintwind</h1>
-            <h2 className="text-base font-normal text-gray-500 mb-4">Tailwind 4 OKLCH Colour Scales Generator</h2>
+            <h2 className="text-base font-normal text-gray-500 mb-4 dark:text-cod-gray-300">Tailwind 4 OKLCH Colour Scales Generator</h2>
             {/* <p className="text-base text-gray-600 mb-8">Instantly create Tailwind 4 OKLCH colour scales.</p> */}
           </div>
 
@@ -329,6 +298,7 @@ const App = () => {
                 <div className="rounded-xl overflow-hidden p-0 bg-white w-full max-w-12">
                   <input
                     type="color"
+                    id="baseColorPicker"
                     value={baseColor}
                     onChange={(e) => setBaseColor(e.target.value)}
                     className="transition-colors bg-transparent p-2 w-12 h-12 overflow-hidden appearance-none absolute top-1/2 transform -translate-y-1/2 rounded-full border-none cursor-pointer"
@@ -336,10 +306,11 @@ const App = () => {
                   />
                 </div>
                 <input
+                  id="baseColorHex"
                   type="text"
                   value={baseColor}
-                  onChange={(e) => setBaseColor(e.target.value)}
-                  className="py-2 rounded-lg ml-1 font-normal w-full text-left bg-transparent focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-colors"
+                  onChange={(e) => setBaseColor(`#${e.target.value.replace(/^#/, "")}`)}
+                  className="py-2 rounded-lg ml-1 font-normal w-full text-left bg-transparent focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-hidden transition-colors"
                   placeholder="#6366f1"
                   aria-label="Base color hex value"
                 />
@@ -350,7 +321,7 @@ const App = () => {
                   tabIndex={0}
                   onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && generateRandomColor()}
                   aria-label="Generate random color (Spacebar)"
-                  className="flex items-center gap-2 text-zinc-600 border border-gray-200 hover:border-gray-200 px-4 py-4 rounded-lg hover:bg-gray-100 transition-colors font-medium bg-white"
+                  className="cursor-pointer flex items-center gap-2 text-zinc-600 border border-gray-200 hover:border-gray-200 px-4 py-4 rounded-lg hover:bg-gray-100 transition-colors font-medium bg-white"
                 >
                   <Shuffle className="w-5 h-5" />
                   Generate random
@@ -359,7 +330,7 @@ const App = () => {
                   onClick={handleExportCss}
                   tabIndex={0}
                   onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && handleExportCss()}
-                  className="flex items-center gap-2 h-full max-h-14 bg-white border border-gray-200 hover:border-gray-200 text-zinc-600 px-6 py-4 rounded-lg hover:bg-gray-100 transition-colors font-medium"
+                  className="cursor-pointer flex items-center gap-2 h-full max-h-14 bg-white border border-gray-200 hover:border-gray-200 text-zinc-600 px-6 py-4 rounded-lg hover:bg-gray-100 transition-colors font-medium"
                   disabled={colorScale.length !== SCALE_STEPS.length}
                 >
                   <Copy className="w-4 h-4" />
@@ -387,7 +358,7 @@ const App = () => {
                 <label htmlFor="color-scheme-select" className="text-sm text-gray-600">
                   Color combination scheme
                 </label>
-                <select id="color-scheme-select" className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
+                <select id="color-scheme-select" className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-hidden">
                   <option>auto</option>
                   <option>Monochromatic</option>
                   <option>Analogous</option>
@@ -400,7 +371,7 @@ const App = () => {
         </div>
 
         {/* Color Palette Display - UPDATED */}
-        <div className="bg-white rounded-2xl shadow-sm mb-8 p-12 pt-4 w-full">
+        <div className="bg-white dark:bg-cod-gray-950 rounded-2xl shadow-xs mb-8 p-12 pt-4 w-full">
           <div className="flex items-center justify-between mb-6">
             {/* <h2 className="text-3xl font-medium text-gray-900">Palette</h2> */}
             <div className="flex gap-4">
@@ -423,15 +394,15 @@ const App = () => {
 
           {/* Main Color Scale */}
           <h3 className="text-3xl font-semibold text-gray-400 mb-4">
-            <span className="text-slate-700">{baseColorName}</span>
+            <span className="text-slate-700 dark:text-cod-gray-200">{baseColorName}</span>
           </h3>
           <div className="grid grid-cols-5 md:grid-cols-10 gap-3 mb-8">
             {colorScale.map((colorData, index) => (
               <div key={index} className="group">
                 {/* Scale steps */}
-                <div className="text-base text-gray-500 mt-1 text-center mb-2">{SCALE_STEPS[index]}</div>
+                <div className="text-base text-gray-500 dark:text-cod-gray-200 mt-1 text-center mb-2">{SCALE_STEPS[index]}</div>
                 <div
-                  className="aspect-square rounded-xl cursor-pointer shadow-sm hover:shadow-md transition-all duration-200 group-hover:scale-100 transform border border-gray-200 relative"
+                  className="aspect-square rounded-xl cursor-pointer shadow-xs hover:shadow-md transition-all duration-200 group-hover:scale-100 transform border border-gray-200 relative"
                   style={{ backgroundColor: colorData.hex }}
                   onClick={() => copyToClipboard(colorData.hex)}
                   title={`Click to copy ${colorData.hex}`}
@@ -450,7 +421,7 @@ const App = () => {
                 </div>
                 <div className="text-center mt-3">
                   {/* Color HEX */}
-                  <div className="text-base font-mono text-gray-700 font-medium">{colorData.hex.toUpperCase()}</div>
+                  <div className="text-base font-mono text-gray-700 dark:text-cod-gray-200 font-medium">{colorData.hex.toUpperCase()}</div>
                   {/* Color OKLCH */}
                   {/* <div className="text-[10px] text-gray-400 mt-1 truncate" title={colorData.oklch}>
                     {colorData.oklch}
@@ -478,7 +449,7 @@ const App = () => {
                   type="text"
                   value={secondaryColor}
                   onChange={(e) => setSecondaryColor(e.target.value)}
-                  className="px-3 py-2 border border-gray-300 rounded-lg font-mono text-left w-32 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
+                  className="px-3 py-2 border border-gray-300 rounded-lg font-mono text-left w-32 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-hidden"
                   placeholder="#f59e0b"
                   aria-label="Secondary color hex value"
                 />

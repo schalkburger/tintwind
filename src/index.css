@@ -1,3 +1,56 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --color-curious-blue-50: oklch(97.7% 0.013 238.8);
+  --color-curious-blue-100: oklch(95.822% 0.02602 233.49);
+  --color-curious-blue-200: oklch(91.513% 0.05818 227.19);
+  --color-curious-blue-300: oklch(84.745% 0.10878 225.95);
+  --color-curious-blue-400: oklch(77.166% 0.15762 229.89);
+  --color-curious-blue-500: oklch(72.295% 0.17645 238.36);
+  --color-curious-blue-600: oklch(63.602% 0.1715 244.15);
+  --color-curious-blue-700: oklch(53.601% 0.14413 244.93);
+  --color-curious-blue-800: oklch(46.701% 0.11675 242.97);
+  --color-curious-blue-900: oklch(40.301% 0.09338 243.06);
+  --color-curious-blue-950: oklch(29.3% 0.066 245.34);
+
+  --color-cod-gray-50: #f1f1f1;
+  --color-cod-gray-100: #e2e2e2;
+  --color-cod-gray-200: #c6c6c6;
+  --color-cod-gray-300: #a8a8a8;
+  --color-cod-gray-400: #8e8e8e;
+  --color-cod-gray-500: #747474;
+  --color-cod-gray-600: #5c5c5c;
+  --color-cod-gray-700: #444444;
+  --color-cod-gray-800: #2c2c2c;
+  --color-cod-gray-900: #181818;
+  --color-cod-gray-950: #0b0b0b;
+
+  --color-black-pearl-50: oklch(0.958 0.001 287.291);
+  --color-black-pearl-100: oklch(0.835 0.006 255.492);
+  --color-black-pearl-200: oklch(0.669 0.013 264.504);
+  --color-black-pearl-300: oklch(0.505 0.02 259.42);
+  --color-black-pearl-400: oklch(0.34 0.025 253.172);
+  --color-black-pearl-500: oklch(0.167 0.041 244.027);
+  --color-black-pearl-600: oklch(0.159 0.041 245.725);
+  --color-black-pearl-700: oklch(0.148 0.043 251.094);
+  --color-black-pearl-800: oklch(0.136 0.045 254.838);
+  --color-black-pearl-900: oklch(0.124 0.049 259.626);
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
