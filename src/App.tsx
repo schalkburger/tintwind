@@ -67,6 +67,18 @@ const App = () => {
   const [showExportModal, setShowExportModal] = useState(false);
   const [exportCode, setExportCode] = useState("");
 
+  const setSafeBaseColor = (color: string) => {
+    try {
+      const hex = chroma(color).hex();
+      setBaseColor(hex);
+    } catch (err) {
+      // Ignore invalid colors silently or show toast
+    }
+  };
+
+  const handleBaseColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSafeBaseColor(e.target.value);
+  };
   /**
    * Generates a 10-step color scale (50-900) from a base color.
    * @param color The base HEX color string.
@@ -201,13 +213,12 @@ const App = () => {
 
   // Effect to update color names when colors change
   useEffect(() => {
-    // The 500 step color (index 5) is the one used for the base color name
-    if (colorScale.length > 5) {
+    if (colorScale.length === SCALE_STEPS.length) {
       setBaseColorName(getClosestColorName(colorScale[5].hex));
     } else {
       setBaseColorName(getClosestColorName(baseColor));
     }
-  }, [baseColor, colorScale]);
+  }, [colorScale]); // Remove baseColor from deps
 
   useEffect(() => {
     if (showSecondary) {
@@ -307,7 +318,7 @@ const App = () => {
                     type="color"
                     id="baseColorPicker"
                     value={baseColor}
-                    onChange={(e) => setBaseColor(e.target.value)}
+                    onChange={handleBaseColorChange}
                     className="transition-colors bg-transparent p-2 w-12 h-12 overflow-hidden appearance-none absolute top-1/2 transform -translate-y-1/2 rounded-full border-none cursor-pointer"
                     aria-label="Base color picker"
                   />
@@ -360,8 +371,8 @@ const App = () => {
                 {/* Scale steps */}
                 <div className="text-base text-gray-500 dark:text-slate-100 mt-1 text-center mb-2">{SCALE_STEPS[index]}</div>
                 <div
-                  className="aspect-square rounded-xl cursor-pointer shadow-xs hover:shadow-md transition-all duration-200 group-hover:scale-100 transform border border-gray-200 relative"
-                  style={{ backgroundColor: colorData.hex }}
+                  className={`aspect-square text-white rounded-xl cursor-pointer shadow-xs hover:shadow-md transition-all duration-200 group-hover:scale-100 transform border relative`}
+                  style={{ backgroundColor: colorData.hex, borderColor: colorData.hex }}
                   onClick={() => copyToClipboard(colorData.hex)}
                   title={`Click to copy ${colorData.hex}`}
                   tabIndex={0}
