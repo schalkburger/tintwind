@@ -223,7 +223,7 @@ const App = () => {
 
   // --- Render ---
   return (
-    <div className="min-h-screen bg-gray-50">
+    <main className="min-h-screen bg-gray-50 dark:bg-cod-gray-950">
       {/* Export Modal */}
       {showExportModal && (
         <div
@@ -316,7 +316,7 @@ const App = () => {
         {/* Hero Section */}
         <div className="text-left mb-2 flex justify-between px-2 w-full">
           <div className="mx-0">
-            <h1 className="text-5xl font-semibold tracking-tight text-gray-900 mb-4">Tintwind</h1>
+            <h1 className="text-5xl font-semibold tracking-tight text-gray-900 mb-4 dark:text-gray-100">Tintwind</h1>
             <h2 className="text-base font-normal text-gray-500 mb-4">Tailwind 4 OKLCH Colour Scales Generator</h2>
             {/* <p className="text-base text-gray-600 mb-8">Instantly create Tailwind 4 OKLCH colour scales.</p> */}
           </div>
@@ -543,7 +543,7 @@ const App = () => {
           </div>
         </div>
       </footer> */}
-    </div>
+    </main>
   );
 };
 
