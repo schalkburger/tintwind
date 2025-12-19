@@ -162,7 +162,8 @@ const App = () => {
       generateVariables(secondaryScale, secondaryColorName);
     }
 
-    const fullCss = `@theme {\n${allCssVariables.join("\n")}\n}`;
+    // const fullCss = `@theme {\n${allCssVariables.join("\n")}\n}`;
+    const fullCss = `\n${allCssVariables.join("\n")}\n`;
     setExportCode(fullCss);
     setShowExportModal(true);
   };
@@ -230,13 +231,13 @@ const App = () => {
           tabIndex={-1} // Modal container handles focus trap logic if fully implemented, -1 is fine for simple overlay
           aria-modal="true"
           role="dialog"
-          className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4 backdrop-blur-xs"
+          className="fixed inset-0 z-50 bg-bunker-400/75 flex items-center justify-center p-4 backdrop-blur-xs"
           onClick={() => setShowExportModal(false)}
         >
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto dark:bg-black" onClick={(e) => e.stopPropagation()} role="document">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto dark:bg-slate-900 lg:p-3" onClick={(e) => e.stopPropagation()} role="document">
             {/* Modal Header */}
             <div className="flex justify-between items-center p-6 border-b dark:border-b-bunker-900">
-              <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Export Tailwind CSS v4 Theme</h2>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Export OKLCH Colors</h2>
               <button
                 onClick={() => setShowExportModal(false)}
                 aria-label="Close export modal"
@@ -249,8 +250,14 @@ const App = () => {
             </div>
 
             {/* Modal Body */}
-            <div className="p-6">
-              <p className="text-gray-700 mb-4 text-sm dark:text-gray-100">Copy the following CSS and paste it into your Tailwind CSS configuration file to use your custom colors in OKLCH format.</p>
+            <div className="p-6 ">
+              <p className="text-gray-700 mb-6 text-base dark:text-black-pearl-50 text-balance">
+                Use <code>@theme</code> to add these{" "}
+                <a href="https://tailwindcss.com/docs/colors#customizing-your-colors" target="_blank">
+                  custom colors
+                </a>{" "}
+                to your project under the <code>--color-*</code> theme namespace.
+              </p>
               <div className="relative">
                 <pre className="bg-gray-900 dark:bg-bunker-800 text-white p-4 rounded-lg overflow-x-auto text-sm font-mono whitespace-pre-wrap max-h-96">{exportCode}</pre>
                 <button
@@ -285,8 +292,8 @@ const App = () => {
         {/* Hero Section */}
         <div className="text-left mb-2 flex justify-between px-2 w-full">
           <div className="mx-0">
-            <h1 className="text-5xl font-semibold tracking-tight text-gray-900 mb-4 dark:text-gray-100">Tintwind</h1>
-            <h2 className="text-base font-normal text-gray-500 mb-4 dark:text-bunker-100">Tailwind 4 OKLCH Colour Scales Generator</h2>
+            <h1 className="text-5xl font-semibold tracking-tight text-gray-900 mb-4 dark:text-gray-100 baloo-2">Tintwind</h1>
+            <h2 className="text-base font-normal text-gray-500 mb-4 dark:text-bunker-100">Tailwind 4 OKLCH Color Generator</h2>
             {/* <p className="text-base text-gray-600 mb-8">Instantly create Tailwind 4 OKLCH colour scales.</p> */}
           </div>
 
@@ -345,13 +352,13 @@ const App = () => {
         <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xs mb-8 p-12 pt-12 w-full">
           {/* Main Color Scale */}
           <h3 className="text-3xl font-semibold text-gray-400 mb-4">
-            <span className="text-slate-700 dark:text-bunker-100">{baseColorName}</span>
+            <span className="text-slate-700 dark:text-white baloo-2">{baseColorName}</span>
           </h3>
           <div className="grid grid-cols-5 md:grid-cols-10 gap-3 mb-8">
             {colorScale.map((colorData, index) => (
               <div key={index} className="group">
                 {/* Scale steps */}
-                <div className="text-base text-gray-500 dark:text-bunker-200 mt-1 text-center mb-2">{SCALE_STEPS[index]}</div>
+                <div className="text-base text-gray-500 dark:text-slate-100 mt-1 text-center mb-2">{SCALE_STEPS[index]}</div>
                 <div
                   className="aspect-square rounded-xl cursor-pointer shadow-xs hover:shadow-md transition-all duration-200 group-hover:scale-100 transform border border-gray-200 relative"
                   style={{ backgroundColor: colorData.hex }}
