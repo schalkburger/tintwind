@@ -71,8 +71,8 @@ const App = () => {
     try {
       const hex = chroma(color).hex();
       setBaseColor(hex);
-    } catch (err) {
-      // Ignore invalid colors silently or show toast
+    } catch (error) {
+      console.error("Error setting safe base color:", error);
     }
   };
 
@@ -304,7 +304,7 @@ const App = () => {
         <div className="text-left mb-2 flex justify-between px-2 w-full">
           <div className="mx-0">
             <h1 className="text-5xl font-semibold tracking-tight text-gray-900 mb-4 dark:text-gray-100 baloo-2">Tintwind</h1>
-            <h2 className="text-base font-normal text-gray-500 mb-4 dark:text-bunker-100">Tailwind 4 OKLCH Color Generator</h2>
+            <h2 className="text-base font-normal text-gray-500 mb-4 dark:text-bunker-100">Tailwind 4 OKLCH Color Palette Generator</h2>
             {/* <p className="text-base text-gray-600 mb-8">Instantly create Tailwind 4 OKLCH colour scales.</p> */}
           </div>
 
