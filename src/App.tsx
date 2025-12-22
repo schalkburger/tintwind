@@ -175,7 +175,7 @@ const App = () => {
     }
 
     // const fullCss = `@theme {\n${allCssVariables.join("\n")}\n}`;
-    const fullCss = `\n${allCssVariables.join("\n")}\n`;
+    const fullCss = `${allCssVariables.join("\n")}\n`;
     setExportCode(fullCss);
     setShowExportModal(true);
   };
