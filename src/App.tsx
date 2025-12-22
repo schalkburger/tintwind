@@ -263,14 +263,10 @@ const App = () => {
             {/* Modal Body */}
             <div className="p-6 ">
               <p className="text-gray-700 mb-6 text-base dark:text-black-pearl-50 text-balance">
-                Use <code>@theme</code> to add these{" "}
-                <a href="https://tailwindcss.com/docs/colors#customizing-your-colors" target="_blank">
-                  custom colors
-                </a>{" "}
-                to your project under the <code>--color-*</code> theme namespace.
+                Add your custom colors under the <code className="bg-color-gray-600 px-2 py-1 rounded-sm">@theme</code> directive in your stylesheet.
               </p>
               <div className="relative">
-                <pre className="bg-gray-900 dark:bg-bunker-800 text-white p-4 rounded-lg overflow-x-auto text-sm font-mono whitespace-pre-wrap max-h-96">{exportCode}</pre>
+                <pre className="bg-gray-900 dark:bg-bunker-500 text-white p-6 rounded-lg overflow-x-auto text-sm font-mono whitespace-pre-wrap max-h-96">{exportCode}</pre>
                 <button
                   onClick={() => copyToClipboard(exportCode)}
                   className="absolute top-2 right-2 p-2 rounded-lg bg-slate-900/70 hover:bg-slate-900 transition-colors text-white flex items-center gap-1 font-medium text-xs"
