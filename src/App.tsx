@@ -235,7 +235,7 @@ const App = () => {
 
   // --- Render ---
   return (
-    <main className="min-h-screen bg-gray-50 dark:bg-bunker-900">
+    <main className="min-h-screen bg-gray-50 dark:bg-black-pearl-500">
       {/* Export Modal */}
       {showExportModal && (
         <div
