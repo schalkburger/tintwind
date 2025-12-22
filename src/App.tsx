@@ -245,7 +245,7 @@ const App = () => {
           className="fixed inset-0 z-50 bg-bunker-400/75 flex items-center justify-center p-4 backdrop-blur-xs"
           onClick={() => setShowExportModal(false)}
         >
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto dark:bg-slate-900 lg:p-3" onClick={(e) => e.stopPropagation()} role="document">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto dark:bg-black-pearl-400 lg:p-3" onClick={(e) => e.stopPropagation()} role="document">
             {/* Modal Header */}
             <div className="flex justify-between items-center p-6 border-b dark:border-b-bunker-900">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Export OKLCH Colors</h2>
