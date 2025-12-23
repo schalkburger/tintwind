@@ -241,7 +241,7 @@ const App = () => {
       <div
         className={`absolute top-0 left-0 w-full h-full z-10 opacity-5`}
         style={{
-          backgroundImage: `linear-gradient(to bottom right, oklch(0.14 0 0), ${deferredBaseColor})`,
+          backgroundImage: `linear-gradient(to bottom, #090909, ${deferredBaseColor})`,
         }}
       ></div>
       {/* Main Content */}
@@ -367,7 +367,7 @@ const App = () => {
           tabIndex={-1} // Modal container handles focus trap logic if fully implemented, -1 is fine for simple overlay
           aria-modal="true"
           role="dialog"
-          className="fixed inset-0 z-50 bg-bunker-400/75 dark:bg-cod-gray-400/15 dark:grayscale flex items-center justify-center p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-50 bg-bunker-400/75 dark:bg-cod-gray-700/85 dark:grayscale flex items-center justify-center p-4 backdrop-blur-xs"
           onClick={() => setShowExportModal(false)}
         >
           <div
