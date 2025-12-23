@@ -236,66 +236,8 @@ const App = () => {
   // --- Render ---
   return (
     <main className="min-h-screen bg-gray-50 dark:bg-black-pearl-500">
-      {/* Export Modal */}
-      {showExportModal && (
-        <div
-          tabIndex={-1} // Modal container handles focus trap logic if fully implemented, -1 is fine for simple overlay
-          aria-modal="true"
-          role="dialog"
-          className="fixed inset-0 z-50 bg-bunker-400/75 flex items-center justify-center p-4 backdrop-blur-xs"
-          onClick={() => setShowExportModal(false)}
-        >
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto dark:bg-black-pearl-400 lg:p-3" onClick={(e) => e.stopPropagation()} role="document">
-            {/* Modal Header */}
-            <div className="flex justify-between items-center p-6 border-b dark:border-b-bunker-900">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Export OKLCH Colors</h2>
-              <button
-                onClick={() => setShowExportModal(false)}
-                aria-label="Close export modal"
-                tabIndex={0}
-                onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && setShowExportModal(false)}
-                className="p-2 rounded-full text-gray-400 hover:text-gray-600 transition-colors focus:outline-hidden focus:ring-2 focus:ring-indigo-500"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            {/* Modal Body */}
-            <div className="p-6 ">
-              <p className="text-gray-700 mb-6 text-base dark:text-black-pearl-50 text-balance">
-                Add your custom colors under the <code className="bg-color-gray-600 px-2 py-1 rounded-sm">@theme</code> directive in your stylesheet.
-              </p>
-              <div className="relative">
-                <pre className="bg-gray-900 dark:bg-bunker-500 text-white p-6 rounded-lg overflow-x-auto text-sm font-mono whitespace-pre-wrap max-h-96">{exportCode}</pre>
-                <button
-                  onClick={() => copyToClipboard(exportCode)}
-                  className="absolute top-2 right-2 p-2 rounded-lg bg-slate-900/70 hover:bg-slate-900 transition-colors text-white flex items-center gap-1 font-medium text-xs"
-                  aria-label={copiedColor === exportCode ? "Copied" : "Copy CSS code"}
-                  tabIndex={0}
-                  onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && copyToClipboard(exportCode)}
-                >
-                  <span className={`flex items-center gap-1 ${copiedColor === exportCode ? "text-green-300" : "text-white"}`}>
-                    {copiedColor === exportCode ? (
-                      <>
-                        <Check className="w-4 h-4" />
-                        Copied
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="w-4 h-4" />
-                        Copy
-                      </>
-                    )}
-                  </span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Main Content */}
-      <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-0 py-12 flex flex-col justify-center items-center min-h-screen">
+      <article className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-0 py-12 flex flex-col justify-center items-center min-h-screen">
         {/* Hero Section */}
         <div className="text-left mb-2 flex justify-between px-2 w-full">
           <div className="mx-0">
@@ -454,7 +396,65 @@ const App = () => {
             </div>
           )}
         </div>
-      </main>
+      </article>
+
+      {/* Export Modal */}
+      {showExportModal && (
+        <div
+          tabIndex={-1} // Modal container handles focus trap logic if fully implemented, -1 is fine for simple overlay
+          aria-modal="true"
+          role="dialog"
+          className="fixed inset-0 z-50 bg-bunker-400/75 flex items-center justify-center p-4 backdrop-blur-xs"
+          onClick={() => setShowExportModal(false)}
+        >
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto dark:bg-slate-900 lg:p-3" onClick={(e) => e.stopPropagation()} role="document">
+            {/* Modal Header */}
+            <div className="flex justify-between items-center p-6 pb-0">
+              <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 baloo-2">Export {baseColorName} OKLCH Colors</h2>
+              <button
+                onClick={() => setShowExportModal(false)}
+                aria-label="Close export modal"
+                tabIndex={0}
+                onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && setShowExportModal(false)}
+                className="p-2 rounded-full text-gray-400 hover:text-gray-600 transition-colors focus:outline-hidden focus:ring-2 focus:ring-indigo-500"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-6 ">
+              <p className="text-gray-700 mb-6 text-base dark:text-black-pearl-50 text-balance">
+                Add your custom <span className="lowercase">{baseColorName}</span> colors under the <code className="font-mono">@theme</code> directive in your stylesheet.
+              </p>
+              <div className="relative">
+                <pre className="bg-gray-900 dark:bg-bunker-900/45 text-white p-6 rounded-lg overflow-x-auto text-sm font-mono whitespace-pre-wrap max-h-96">{exportCode}</pre>
+                <button
+                  onClick={() => copyToClipboard(exportCode)}
+                  className="absolute top-6 right-6 p-2 rounded-lg bg-transparent transition-colors text-white flex items-center gap-2 font-medium text-xs"
+                  aria-label={copiedColor === exportCode ? "Copied" : "Copy CSS code"}
+                  tabIndex={0}
+                  onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && copyToClipboard(exportCode)}
+                >
+                  <span className={`flex items-center gap-2 cursor-pointer ${copiedColor === exportCode ? "text-green-300" : "text-white"}`}>
+                    {copiedColor === exportCode ? (
+                      <>
+                        <Check className="w-4 h-4" />
+                        <span className="sr-only">Copied</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-4 h-4" />
+                        <span className="sr-only">Copy</span>
+                      </>
+                    )}
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 };
