@@ -245,7 +245,7 @@ const App = () => {
         }}
       ></div>
       {/* Main Content */}
-      <article className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-0 py-12 flex flex-col justify-center items-center min-h-screen z-40 relative">
+      <article className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex flex-col justify-center items-center min-h-screen z-40 relative">
         {/* Header Section */}
         <header className="text-left mb-2 flex flex-col lg:flex-row justify-between px-2 w-full">
           <div className="mx-0">
@@ -258,7 +258,7 @@ const App = () => {
           </div>
 
           {/* Header Buttons */}
-          <div className="flex flex-col items-center md:pt-2 lg:p-4 pr-0 w-full">
+          <div className="flex flex-col items-center md:pt-2 lg:p-4 pr-0 w-full md:w-fit">
             {/* Color Input */}
             <div className="flex flex-col md:flex-row items-center gap-3 mb-6 lg:flex-wrap w-full lg:justify-end">
               {/* Base Color Input */}
@@ -313,7 +313,7 @@ const App = () => {
         </header>
 
         {/* Color Palette Display Card */}
-        <div className="bg-white dark:bg-cod-gray-500 border dark:border-woodsmoke-400/50 rounded-2xl shadow-xs mb-8 p-12 pt-12 pb-10 w-full">
+        <div className="bg-white dark:bg-cod-gray-500 border dark:border-woodsmoke-400/50 rounded-2xl shadow-xs mb-8 p-10 md:p-8 pt-12 pb-10 w-full">
           {/* Main Color Scale */}
           <h3 className="text-3xl font-semibold text-gray-400 mb-6">
             <span className="text-slate-700 dark:text-white baloo-2 text-3xl">{baseColorName}</span>
@@ -347,7 +347,7 @@ const App = () => {
                 </div>
                 <div className="text-center mt-3">
                   {/* Color HEX */}
-                  <div className="text-base font-mono text-gray-700 dark:text-bunker-100 font-medium hidden lg:flex">
+                  <div className="text-base font-mono text-gray-700 text-center justify-center dark:text-bunker-100 font-medium hidden lg:flex">
                     {colorData.hex.toUpperCase()}
                   </div>
                   {/* Color OKLCH */}
