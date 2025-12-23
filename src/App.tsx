@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
 import chroma from "chroma-js";
-import { /*Palette,*/ Shuffle, /*Plus,*/ /*Save,*/ /*Settings,*/ Check, Copy, X } from "lucide-react";
+import { Check, Copy, Shuffle, X } from "lucide-react";
+import { useDeferredValue, useEffect, useMemo, useState } from "react";
 import { NAMED_COLORS } from "../src/lib/constants";
 
 // --- Type Definitions ---
@@ -55,30 +55,35 @@ const getClosestColorName = (hex: string): string => {
 
 const App = () => {
   const [baseColor, setBaseColor] = useState("#6366f1");
-  const [colorScale, setColorScale] = useState<ColorScale>([]);
-  const [baseColorName, setBaseColorName] = useState("Indigo");
-
-  const [secondaryColor, setSecondaryColor] = useState("#f59e0b");
-  const [showSecondary /*setShowSecondary*/] = useState(false);
-  const [secondaryScale, setSecondaryScale] = useState<ColorScale>([]);
-  const [secondaryColorName, setSecondaryColorName] = useState("Amber");
-
+  const [inputValue, setInputValue] = useState("#6366f1");
   const [copiedColor, setCopiedColor] = useState<string | null>(null);
   const [showExportModal, setShowExportModal] = useState(false);
   const [exportCode, setExportCode] = useState("");
 
-  const setSafeBaseColor = (color: string) => {
-    try {
-      const hex = chroma(color).hex();
-      setBaseColor(hex);
-    } catch (error) {
-      console.error("Error setting safe base color:", error);
+  const deferredBaseColor = useDeferredValue(baseColor);
+
+  // 2. Update the input value and attempt to update the base color if valid
+  const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const nextValue = e.target.value;
+
+    // Ensure it starts with # for consistency
+    const formattedValue = nextValue.startsWith("#") ? nextValue : `#${nextValue}`;
+    setInputValue(formattedValue);
+
+    // 3. Validation Check: Only update the generator if it's a valid chroma color
+    if (chroma.valid(formattedValue)) {
+      setBaseColor(chroma(formattedValue).hex());
     }
+    // If invalid (like #6366f), we do nothing. No error, no update.
   };
 
-  const handleBaseColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSafeBaseColor(e.target.value);
+  // 4. Sync inputValue when the color picker (the <input type="color">) is used
+  const handlePickerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newColor = e.target.value;
+    setBaseColor(newColor);
+    setInputValue(newColor);
   };
+
   /**
    * Generates a 10-step color scale (50-900) from a base color.
    * @param color The base HEX color string.
@@ -88,9 +93,31 @@ const App = () => {
     try {
       // Adjusted ratios for a smoother 10-step scale (50-900)
       const mixRatios = [0.95, 0.8, 0.6, 0.4, 0.2, 0, 0.2, 0.4, 0.6, 0.8];
-      const mixColors = ["#ffffff", "#ffffff", "#ffffff", "#ffffff", "#ffffff", color, "#000000", "#000000", "#000000", "#000000"];
+      const mixColors = [
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        color,
+        "#000000",
+        "#000000",
+        "#000000",
+        "#000000",
+      ];
       // FIX: Use 'as const' to resolve TypeScript error for mixModes array elements
-      const mixModes = ["lch", "lch", "lch", "lch", "lch", "lch", "lch", "lch", "lch", "lch"] as const;
+      const mixModes = [
+        "lch",
+        "lch",
+        "lch",
+        "lch",
+        "lch",
+        "lch",
+        "lch",
+        "lch",
+        "lch",
+        "lch",
+      ] as const;
 
       // Ensure the base color is exactly the 500 step (index 5)
       const hexScale: string[] = mixRatios.map((ratio, index) => {
@@ -117,12 +144,23 @@ const App = () => {
     }
   };
 
+  const colorScale = useMemo(() => {
+    return generateColorScale(deferredBaseColor);
+  }, [deferredBaseColor]);
+
+  const baseColorName = useMemo(() => {
+    // Optimization: Use the 500 step if scale exists, otherwise use raw color
+    const hexToName = colorScale.length > 5 ? colorScale[5].hex : deferredBaseColor;
+    return getClosestColorName(hexToName);
+  }, [deferredBaseColor, colorScale]);
+
   /**
    * Generates a random HEX color and sets it as the new base color.
    */
   const generateRandomColor = () => {
     const randomColor = chroma.random().hex();
     setBaseColor(randomColor);
+    setInputValue(randomColor);
   };
 
   /**
@@ -170,9 +208,9 @@ const App = () => {
     }
 
     // Secondary Color Scale
-    if (showSecondary && secondaryScale.length === SCALE_STEPS.length) {
-      generateVariables(secondaryScale, secondaryColorName);
-    }
+    // if (showSecondary && secondaryScale.length === SCALE_STEPS.length) {
+    //   generateVariables(secondaryScale, secondaryColorName);
+    // }
 
     // const fullCss = `@theme {\n${allCssVariables.join("\n")}\n}`;
     const fullCss = `${allCssVariables.join("\n")}\n`;
@@ -195,89 +233,66 @@ const App = () => {
     return () => document.removeEventListener("keydown", handleKeyPress);
   }, []);
 
-  // Effect to update color scales when base or secondary colors change
-  useEffect(() => {
-    setColorScale(generateColorScale(baseColor));
-  }, [baseColor]);
-
-  useEffect(() => {
-    if (showSecondary) {
-      // Initialize secondary color if it's being shown for the first time
-      const finalSecondaryColor = secondaryColor || "#f59e0b";
-      setSecondaryColor(finalSecondaryColor);
-      setSecondaryScale(generateColorScale(finalSecondaryColor));
-    } else {
-      setSecondaryScale([]);
-    }
-  }, [secondaryColor, showSecondary]);
-
-  // Effect to update color names when colors change
-  useEffect(() => {
-    if (colorScale.length === SCALE_STEPS.length) {
-      setBaseColorName(getClosestColorName(colorScale[5].hex));
-    } else {
-      setBaseColorName(getClosestColorName(baseColor));
-    }
-  }, [colorScale]); // Remove baseColor from deps
-
-  useEffect(() => {
-    if (showSecondary) {
-      // If the scale is ready, use its 500 step. Otherwise, use the raw color.
-      if (secondaryScale.length > 5) {
-        setSecondaryColorName(getClosestColorName(secondaryScale[5].hex));
-      } else if (secondaryColor) {
-        setSecondaryColorName(getClosestColorName(secondaryColor));
-      }
-    } else {
-      setSecondaryColorName("Secondary"); // Default name when hidden
-    }
-  }, [secondaryColor, secondaryScale, showSecondary]);
+  console.log("baseColor", deferredBaseColor);
 
   // --- Render ---
   return (
-    <main className="min-h-screen bg-gray-50 dark:bg-black-pearl-500">
+    <main className="min-h-screen bg-gray-50 dark:bg-cod-gray-500">
+      <div
+        className={`absolute top-0 left-0 w-full h-full z-10 opacity-5`}
+        style={{
+          backgroundImage: `linear-gradient(to bottom right, oklch(0.14 0 0), ${deferredBaseColor})`,
+        }}
+      ></div>
       {/* Main Content */}
-      <article className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-0 py-12 flex flex-col justify-center items-center min-h-screen">
-        {/* Hero Section */}
-        <div className="text-left mb-2 flex justify-between px-2 w-full">
+      <article className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-0 py-12 flex flex-col justify-center items-center min-h-screen z-40 relative">
+        {/* Header Section */}
+        <header className="text-left mb-2 flex flex-col lg:flex-row justify-between px-2 w-full">
           <div className="mx-0">
-            <h1 className="text-5xl font-semibold tracking-tight text-gray-900 mb-4 dark:text-gray-100 baloo-2">Tintwind</h1>
-            <h2 className="text-base font-normal text-gray-500 mb-4 dark:text-bunker-100">Tailwind 4 OKLCH Color Palette Generator</h2>
-            {/* <p className="text-base text-gray-600 mb-8">Instantly create Tailwind 4 OKLCH colour scales.</p> */}
+            <h1 className="text-5xl font-semibold tracking-tight text-gray-900 mb-4 dark:text-gray-100 baloo-2">
+              Tintwind
+            </h1>
+            <h2 className="text-base font-normal text-gray-500 mb-4 dark:text-bunker-100">
+              Tailwind 4 OKLCH Color Palette Generator
+            </h2>
           </div>
 
-          <div className="flex flex-col items-center p-4 w-fit">
-            {/* Color Input (omitted for brevity, no changes needed) */}
-            <div className="flex items-center gap-4 mb-6 flex-wrap w-full justify-end">
+          {/* Header Buttons */}
+          <div className="flex flex-col items-center md:pt-2 lg:p-4 pr-0 w-full">
+            {/* Color Input */}
+            <div className="flex flex-col md:flex-row items-center gap-3 mb-6 lg:flex-wrap w-full lg:justify-end">
               {/* Base Color Input */}
-              <div className="relative border border-gray-200 hover:border-gray-200 bg-white items-left flex rounded-xl max-w-36 p-2">
-                <div className="rounded-xl overflow-hidden p-0 bg-white w-full max-w-12">
+              <div className="relative border border-gray-200 hover:border-gray-200 dark:border-woodsmoke-400/50 bg-white items-left flex rounded-xl md:max-w-36 p-2 dark:bg-woodsmoke-600 dark:hover:border-woodsmoke-400 transition-colors duration-150 ease-in w-full">
+                <div className="rounded-sm overflow-hidden p-0 bg-white max-w-none w-fit min-w-10 dark:bg-transparent flex justify-center items-center">
                   <input
                     type="color"
                     id="baseColorPicker"
                     value={baseColor}
-                    onChange={handleBaseColorChange}
-                    className="transition-colors bg-transparent p-2 w-12 h-12 overflow-hidden appearance-none absolute top-1/2 transform -translate-y-1/2 rounded-full border-none cursor-pointer"
+                    // onChange={handleBaseColorChange}
+                    onChange={handlePickerChange}
+                    className="bg-transparent p-0 w-8 h-8 flex min-w-fit appearance-none border-none cursor-pointer rounded-xl"
                     aria-label="Base color picker"
+                    title="Base color picker"
                   />
                 </div>
                 <input
                   id="baseColorHex"
                   type="text"
-                  value={baseColor}
-                  onChange={(e) => setBaseColor(`#${e.target.value.replace(/^#/, "")}`)}
-                  className="py-2 rounded-lg ml-1 font-normal w-full text-left bg-transparent focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-hidden transition-colors"
+                  value={inputValue} // Bind to the "dirty" value
+                  onChange={handleTextChange}
+                  className="py-2 rounded-lg pl-1 font-normal w-full text-left bg-transparent focus:ring-0 focus:border-none outline-hidden transition-colors dark:text-shark-100 text-lg font-mono"
                   placeholder="#6366f1"
                   aria-label="Base color hex value"
                 />
               </div>
-              <div className="flex items-center gap-2">
+              {/* Generate Random & Export CSS Buttons */}
+              <div className="flex flex-col md:flex-row w-full md:w-fit md:items-center gap-2">
                 <button
                   onClick={generateRandomColor}
                   tabIndex={0}
                   onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && generateRandomColor()}
                   aria-label="Generate random color (Spacebar)"
-                  className="cursor-pointer flex items-center gap-2 text-zinc-600 border border-gray-200 hover:border-gray-200 px-4 py-4 rounded-lg hover:bg-gray-100 transition-colors font-medium bg-white"
+                  className="cursor-pointer items-center gap-2 text-zinc-600 border border-gray-200 hover:border-gray-200 px-4 py-4 font-medium dark:border-mercury-900 bg-white items-left flex flex-row rounded-xl p-2 dark:bg-mercury-500 dark:hover:border-mercury-800 transition-colors duration-100 ease-in dark:text-shark-800 dark:hover:bg-mercury-300"
                 >
                   <Shuffle className="w-5 h-5" />
                   Generate random
@@ -286,7 +301,7 @@ const App = () => {
                   onClick={handleExportCss}
                   tabIndex={0}
                   onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && handleExportCss()}
-                  className="cursor-pointer flex items-center gap-2 h-full max-h-14 bg-white border border-gray-200 hover:border-gray-200 text-zinc-600 px-6 py-4 rounded-lg hover:bg-gray-100 transition-colors font-medium"
+                  className="cursor-pointer items-center gap-2 text-zinc-600 border border-gray-200 hover:border-gray-200 px-4 py-4 font-medium dark:border-mercury-900 bg-white items-left flex flex-row rounded-xl p-2 dark:bg-mercury-500 dark:hover:border-mercury-800 transition-colors duration-100 ease-in dark:text-shark-800 dark:hover:bg-mercury-300"
                   disabled={colorScale.length !== SCALE_STEPS.length}
                 >
                   <Copy className="w-4 h-4" />
@@ -295,19 +310,21 @@ const App = () => {
               </div>
             </div>
           </div>
-        </div>
+        </header>
 
-        {/* Color Palette Display - UPDATED */}
-        <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xs mb-8 p-12 pt-12 w-full">
+        {/* Color Palette Display Card */}
+        <div className="bg-white dark:bg-cod-gray-500 border dark:border-woodsmoke-400/50 rounded-2xl shadow-xs mb-8 p-12 pt-12 pb-10 w-full">
           {/* Main Color Scale */}
-          <h3 className="text-3xl font-semibold text-gray-400 mb-4">
-            <span className="text-slate-700 dark:text-white baloo-2">{baseColorName}</span>
+          <h3 className="text-3xl font-semibold text-gray-400 mb-6">
+            <span className="text-slate-700 dark:text-white baloo-2 text-3xl">{baseColorName}</span>
           </h3>
           <div className="grid grid-cols-5 md:grid-cols-10 gap-3 mb-8">
             {colorScale.map((colorData, index) => (
               <div key={index} className="group">
                 {/* Scale steps */}
-                <div className="text-base text-gray-500 dark:text-slate-100 mt-1 text-center mb-2">{SCALE_STEPS[index]}</div>
+                <div className="text-base text-gray-500 dark:text-slate-100 mt-1 text-center mb-2">
+                  {SCALE_STEPS[index]}
+                </div>
                 <div
                   className={`aspect-square text-white rounded-xl cursor-pointer shadow-xs hover:shadow-md transition-all duration-200 group-hover:scale-100 transform border relative`}
                   style={{ backgroundColor: colorData.hex, borderColor: colorData.hex }}
@@ -316,7 +333,9 @@ const App = () => {
                   tabIndex={0}
                   role="button"
                   aria-label={`Copy primary color ${SCALE_STEPS[index]} (${colorData.hex})`}
-                  onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && copyToClipboard(colorData.hex)}
+                  onKeyDown={(e) =>
+                    (e.key === "Enter" || e.key === " ") && copyToClipboard(colorData.hex)
+                  }
                 >
                   <div
                     className={`absolute inset-0 flex items-center justify-center bg-black/50 rounded-xl transition-opacity duration-200 ${
@@ -328,7 +347,9 @@ const App = () => {
                 </div>
                 <div className="text-center mt-3">
                   {/* Color HEX */}
-                  <div className="text-base font-mono text-gray-700 dark:text-bunker-100 font-medium">{colorData.hex.toUpperCase()}</div>
+                  <div className="text-base font-mono text-gray-700 dark:text-bunker-100 font-medium hidden lg:flex">
+                    {colorData.hex.toUpperCase()}
+                  </div>
                   {/* Color OKLCH */}
                   {/* <div className="text-[10px] text-gray-400 mt-1 truncate" title={colorData.oklch}>
                     {colorData.oklch}
@@ -337,64 +358,6 @@ const App = () => {
               </div>
             ))}
           </div>
-
-          {/* Secondary Color Scale - UPDATED */}
-          {showSecondary && (
-            <div>
-              <h3 className="text-xl font-semibold text-gray-800 mb-4">
-                Secondary Scale: <span className="text-slate-900">{secondaryColorName}</span>
-              </h3>
-              <div id="secondary-scale-controls" className="flex items-start gap-4 mb-6">
-                <input
-                  type="color"
-                  value={secondaryColor}
-                  onChange={(e) => setSecondaryColor(e.target.value)}
-                  className="w-12 h-12 rounded-lg border-2 border-gray-300 cursor-pointer hover:border-gray-400 transition-colors"
-                  aria-label="Secondary color picker"
-                />
-                <input
-                  type="text"
-                  value={secondaryColor}
-                  onChange={(e) => setSecondaryColor(e.target.value)}
-                  className="px-3 py-2 border border-gray-300 rounded-lg font-mono text-left w-32 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-hidden"
-                  placeholder="#f59e0b"
-                  aria-label="Secondary color hex value"
-                />
-                <span className="text-gray-700 font-medium">Secondary Color</span>
-              </div>
-              <div className="grid grid-cols-5 md:grid-cols-10 gap-3">
-                {secondaryScale.map((colorData, index) => (
-                  <div key={index} className="group">
-                    <div
-                      className="aspect-square rounded-xl cursor-pointer shadow-md hover:shadow-xl transition-all duration-200 group-hover:scale-105 transform border border-gray-200 relative"
-                      style={{ backgroundColor: colorData.hex }}
-                      onClick={() => copyToClipboard(colorData.hex)}
-                      title={`Click to copy ${colorData.hex}`}
-                      tabIndex={0}
-                      role="button"
-                      aria-label={`Copy secondary color ${SCALE_STEPS[index]} (${colorData.hex})`}
-                      onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && copyToClipboard(colorData.hex)}
-                    >
-                      <div
-                        className={`absolute inset-0 flex items-start justify-center bg-black/50 rounded-xl transition-opacity duration-200 ${
-                          copiedColor === colorData.hex ? "opacity-100" : "opacity-0"
-                        }`}
-                      >
-                        <Check className="w-6 h-6 text-white" />
-                      </div>
-                    </div>
-                    <div className="text-left mt-3">
-                      <div className="text-xs font-mono text-gray-700 font-medium">{colorData.hex.toUpperCase()}</div>
-                      <div className="text-xs text-gray-500 mt-1">{SCALE_STEPS[index]}</div>
-                      {/* <div className="text-[10px] text-gray-400 mt-1 truncate" title={colorData.oklch}>
-                        {colorData.oklch.split("(")[1]?.split(" ")[0]}
-                      </div> */}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
       </article>
 
@@ -404,19 +367,25 @@ const App = () => {
           tabIndex={-1} // Modal container handles focus trap logic if fully implemented, -1 is fine for simple overlay
           aria-modal="true"
           role="dialog"
-          className="fixed inset-0 z-50 bg-bunker-400/75 flex items-center justify-center p-4 backdrop-blur-xs"
+          className="fixed inset-0 z-50 bg-bunker-400/75 dark:bg-cod-gray-400/15 dark:grayscale flex items-center justify-center p-4 backdrop-blur-sm"
           onClick={() => setShowExportModal(false)}
         >
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto dark:bg-slate-900 lg:p-3" onClick={(e) => e.stopPropagation()} role="document">
+          <div
+            className="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto dark:bg-shark-500 lg:p-3"
+            onClick={(e) => e.stopPropagation()}
+            role="document"
+          >
             {/* Modal Header */}
             <div className="flex justify-between items-center p-6 pb-0">
-              <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 baloo-2">Export {baseColorName} OKLCH Colors</h2>
+              <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 baloo-2">
+                Export {baseColorName} OKLCH Colors
+              </h2>
               <button
                 onClick={() => setShowExportModal(false)}
                 aria-label="Close export modal"
                 tabIndex={0}
                 onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && setShowExportModal(false)}
-                className="p-2 rounded-full text-gray-400 hover:text-gray-600 transition-colors focus:outline-hidden focus:ring-2 focus:ring-indigo-500"
+                className="p-2 rounded-full text-gray-400 hover:text-gray-200 transition-colors focus:outline-hidden focus:ring-2 focus:ring-indigo-500 cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -424,19 +393,28 @@ const App = () => {
 
             {/* Modal Body */}
             <div className="p-6 ">
-              <p className="text-gray-700 mb-6 text-base dark:text-black-pearl-50 text-balance">
-                Add your custom <span className="lowercase">{baseColorName}</span> colors under the <code className="font-mono">@theme</code> directive in your stylesheet.
+              <p className="text-gray-700 mb-6 text-sm dark:text-black-pearl-50 text-pretty">
+                Add your custom <span className="lowercase">{baseColorName}</span> colors under the{" "}
+                <code className="font-mono">@theme</code> directive in your stylesheet.
               </p>
               <div className="relative">
-                <pre className="bg-gray-900 dark:bg-bunker-900/45 text-white p-6 rounded-lg overflow-x-auto text-sm font-mono whitespace-pre-wrap max-h-96">{exportCode}</pre>
+                <pre className="bg-gray-900 dark:bg-bunker-900/45 text-cod-gray-100 p-6 rounded-lg overflow-x-auto text-sm font-mono whitespace-pre-wrap max-h-96">
+                  {exportCode}
+                </pre>
                 <button
                   onClick={() => copyToClipboard(exportCode)}
-                  className="absolute top-6 right-6 p-2 rounded-lg bg-transparent transition-colors text-white flex items-center gap-2 font-medium text-xs"
+                  className="absolute top-4 right-5 p-2 rounded-lg bg-transparent transition-colors text-white flex items-center gap-2 font-medium text-xs dark:hover:bg-cod-gray-400 cursor-pointer"
                   aria-label={copiedColor === exportCode ? "Copied" : "Copy CSS code"}
                   tabIndex={0}
-                  onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && copyToClipboard(exportCode)}
+                  onKeyDown={(e) =>
+                    (e.key === "Enter" || e.key === " ") && copyToClipboard(exportCode)
+                  }
                 >
-                  <span className={`flex items-center gap-2 cursor-pointer ${copiedColor === exportCode ? "text-green-300" : "text-white"}`}>
+                  <span
+                    className={`flex items-center gap-2 ${
+                      copiedColor === exportCode ? "text-green-300" : "text-white"
+                    }`}
+                  >
                     {copiedColor === exportCode ? (
                       <>
                         <Check className="w-4 h-4" />
