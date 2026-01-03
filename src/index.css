@@ -90,9 +90,38 @@
   }
 }
 
-.baloo-2 {
+.baloo-normal {
   font-family: "Baloo 2", sans-serif;
   font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
+}
+
+.baloo-medium {
+  font-family: "Baloo 2", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+}
+
+.baloo-semibold {
+  font-family: "Baloo 2", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 600;
+  font-style: normal;
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0; /* Removes default padding */
+}
+
+input[type="color"]::-webkit-color-swatch {
+  border-radius: 50%; /* Rounds the inner color swatch */
+  border: none; /* Removes any default border */
+}
+
+/* For Firefox compatibility */
+input[type="color"]::-moz-color-swatch {
+  border-radius: 50%;
+  border: none;
 }

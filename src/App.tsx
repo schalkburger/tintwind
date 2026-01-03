@@ -233,11 +233,11 @@ const App = () => {
     return () => document.removeEventListener("keydown", handleKeyPress);
   }, []);
 
-  console.log("baseColor", deferredBaseColor);
+  // console.log("baseColor", deferredBaseColor);
 
   // --- Render ---
   return (
-    <main className="min-h-screen bg-gray-50 dark:bg-cod-gray-500">
+    <main className="min-h-screen bg-gray-50 dark:bg-cod-gray-500 baloo-normal">
       <div
         className={`absolute top-0 left-0 w-full h-full z-10 opacity-5`}
         style={{
@@ -249,7 +249,7 @@ const App = () => {
         {/* Header Section */}
         <header className="text-left mb-2 flex flex-col lg:flex-row justify-between px-2 w-full">
           <div className="mx-0">
-            <h1 className="text-5xl font-semibold tracking-tight text-gray-900 mb-4 dark:text-gray-100 baloo-2">
+            <h1 className="text-5xl font-semibold tracking-tight text-gray-900 mb-4 dark:text-gray-100 baloo-semibold">
               Tintwind
             </h1>
             <h2 className="text-base font-normal text-gray-500 mb-4 dark:text-bunker-100">
@@ -263,14 +263,13 @@ const App = () => {
             <div className="flex flex-col md:flex-row items-center gap-3 mb-6 lg:flex-wrap w-full lg:justify-end">
               {/* Base Color Input */}
               <div className="relative border border-gray-200 hover:border-gray-200 dark:border-woodsmoke-400/50 bg-white items-left flex rounded-xl md:max-w-36 p-2 dark:bg-woodsmoke-600 dark:hover:border-woodsmoke-400 transition-colors duration-150 ease-in w-full">
-                <div className="rounded-sm overflow-hidden p-0 bg-white max-w-none w-fit min-w-10 dark:bg-transparent flex justify-center items-center">
+                <div className="overflow-hidden p-0 bg-transparent max-w-none w-fit min-w-10 dark:bg-transparent flex justify-center items-center relative">
                   <input
                     type="color"
                     id="baseColorPicker"
                     value={baseColor}
-                    // onChange={handleBaseColorChange}
                     onChange={handlePickerChange}
-                    className="bg-transparent p-0 w-8 h-8 flex min-w-fit appearance-none border-none cursor-pointer rounded-xl"
+                    className="absolute flex top-1/2 transform -translate-y-1/2 w-6 h-6 rounded-full border-none cursor-pointer"
                     aria-label="Base color picker"
                     title="Base color picker"
                   />
@@ -278,7 +277,7 @@ const App = () => {
                 <input
                   id="baseColorHex"
                   type="text"
-                  value={inputValue} // Bind to the "dirty" value
+                  value={inputValue}
                   onChange={handleTextChange}
                   className="py-2 rounded-lg pl-1 font-normal w-full text-left bg-transparent focus:ring-0 focus:border-none outline-hidden transition-colors dark:text-shark-100 text-lg font-mono"
                   placeholder="#6366f1"
@@ -316,7 +315,7 @@ const App = () => {
         <div className="bg-white dark:bg-cod-gray-500 border dark:border-woodsmoke-400/50 rounded-2xl shadow-xs mb-8 p-10 md:p-8 pt-12 pb-10 w-full">
           {/* Main Color Scale */}
           <h3 className="text-3xl font-semibold text-gray-400 mb-6">
-            <span className="text-slate-700 dark:text-white baloo-2 text-3xl">{baseColorName}</span>
+            <span className="text-slate-700 dark:text-white text-3xl">{baseColorName}</span>
           </h3>
           <div className="grid grid-cols-5 md:grid-cols-10 gap-3 mb-8">
             {colorScale.map((colorData, index) => (
@@ -367,17 +366,24 @@ const App = () => {
           tabIndex={-1} // Modal container handles focus trap logic if fully implemented, -1 is fine for simple overlay
           aria-modal="true"
           role="dialog"
-          className="fixed inset-0 z-50 bg-bunker-400/75 dark:bg-cod-gray-700/85 dark:grayscale flex items-center justify-center p-4 backdrop-blur-xs"
+          className="fixed inset-0 z-50 bg-bunker-400/75 dark:bg-cod-gray-700/85 flex items-center justify-center p-4 backdrop-blur-xs"
           onClick={() => setShowExportModal(false)}
         >
           <div
-            className="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto dark:bg-shark-500 lg:p-3"
+            className="bg-white relative rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto dark:bg-shark-600 border dark:border-shark-400/50 p-8"
             onClick={(e) => e.stopPropagation()}
             role="document"
           >
+            <div
+              className={`absolute top-0 left-0 w-full h-full z-10 opacity-5`}
+              style={{
+                backgroundImage: `linear-gradient(to bottom right, #000, ${deferredBaseColor})`,
+              }}
+            ></div>
+
             {/* Modal Header */}
-            <div className="flex justify-between items-center p-6 pb-0">
-              <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 baloo-2">
+            <div className="flex justify-between items-center z-20 relative">
+              <h2 className="text-3xl font-normal text-gray-900 dark:text-gray-100 baloo-normal">
                 Export {baseColorName} OKLCH Colors
               </h2>
               <button
@@ -392,18 +398,18 @@ const App = () => {
             </div>
 
             {/* Modal Body */}
-            <div className="p-6 ">
-              <p className="text-gray-700 mb-6 text-sm dark:text-black-pearl-50 text-pretty">
-                Add your custom <span className="lowercase">{baseColorName}</span> colors under the{" "}
-                <code className="font-mono">@theme</code> directive in your stylesheet.
+            <div className="relative z-20">
+              <p className="text-gray-700 mt-3 mb-6 text-sm dark:text-black-pearl-50 text-pretty">
+                Add your custom colors under the <code className="font-mono">@theme</code> directive
+                in your stylesheet.
               </p>
               <div className="relative">
-                <pre className="bg-gray-900 dark:bg-bunker-900/45 text-cod-gray-100 p-6 rounded-lg overflow-x-auto text-sm font-mono whitespace-pre-wrap max-h-96">
+                <pre className="bg-gray-900 dark:bg-bunker-900/45 text-cod-gray-100 p-6 lg:pl-2 rounded-lg overflow-x-auto text-sm font-mono whitespace-pre-wrap max-h-96">
                   {exportCode}
                 </pre>
                 <button
                   onClick={() => copyToClipboard(exportCode)}
-                  className="absolute top-4 right-5 p-2 rounded-lg bg-transparent transition-colors text-white flex items-center gap-2 font-medium text-xs dark:hover:bg-cod-gray-400 cursor-pointer"
+                  className="absolute top-4 right-5 p-2 rounded-lg bg-transparent transition-colors text-white flex items-center gap-2 font-medium text-xs dark:hover:bg-bunker-700 cursor-pointer"
                   aria-label={copiedColor === exportCode ? "Copied" : "Copy CSS code"}
                   tabIndex={0}
                   onKeyDown={(e) =>
@@ -412,7 +418,7 @@ const App = () => {
                 >
                   <span
                     className={`flex items-center gap-2 ${
-                      copiedColor === exportCode ? "text-green-300" : "text-white"
+                      copiedColor === exportCode ? "text-green-50" : "text-white"
                     }`}
                   >
                     {copiedColor === exportCode ? (
