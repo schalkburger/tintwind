@@ -55,6 +55,7 @@ const getClosestColorName = (hex: string): string => {
 
 const App = () => {
   const [baseColor, setBaseColor] = useState("#6366f1");
+  const [baseDarkenColor, setbaseDarkenColor] = useState("#6366f1");
   const [inputValue, setInputValue] = useState("#6366f1");
   const [copiedColor, setCopiedColor] = useState<string | null>(null);
   const [showExportModal, setShowExportModal] = useState(false);
@@ -233,15 +234,13 @@ const App = () => {
     return () => document.removeEventListener("keydown", handleKeyPress);
   }, []);
 
-  // console.log("baseColor", deferredBaseColor);
-
   // --- Render ---
   return (
     <main className="min-h-screen bg-gray-50 dark:bg-cod-gray-500 baloo-normal">
       <div
         className={`absolute top-0 left-0 w-full h-full z-10 opacity-5`}
         style={{
-          backgroundImage: `linear-gradient(to bottom, #090909, ${deferredBaseColor})`,
+          backgroundImage: `linear-gradient(to right, #090909, ${deferredBaseColor})`,
         }}
       ></div>
       {/* Main Content */}
@@ -262,8 +261,14 @@ const App = () => {
             {/* Color Input */}
             <div className="flex flex-col md:flex-row items-center gap-3 mb-6 lg:flex-wrap w-full lg:justify-end">
               {/* Base Color Input */}
-              <div className="relative border border-gray-200 hover:border-gray-200 dark:border-woodsmoke-400/50 bg-white items-left flex rounded-xl md:max-w-36 p-2 dark:bg-woodsmoke-600 dark:hover:border-woodsmoke-400 transition-colors duration-150 ease-in w-full">
-                <div className="overflow-hidden p-0 bg-transparent max-w-none w-fit min-w-10 dark:bg-transparent flex justify-center items-center relative">
+              <div className="base-color-input relative border border-gray-200 hover:border-gray-200 dark:border-woodsmoke-400/50 bg-white items-left flex rounded-xl md:max-w-36 p-2 dark:bg-woodsmoke-600 dark:hover:border-woodsmoke-400 transition-colors duration-150 ease-in w-full">
+                <div
+                  className="overflow-hidden p-0 bg-transparent max-w-none w-fit min-w-10 dark:bg-transparent flex justify-center items-center relative focus:outline-none
+            focus-visible:ring-2
+            focus-visible:ring-indigo-500
+            focus-visible:ring-offset-2
+            focus-visible:ring-offset-black"
+                >
                   <input
                     type="color"
                     id="baseColorPicker"
@@ -285,7 +290,7 @@ const App = () => {
                 />
               </div>
               {/* Generate Random & Export CSS Buttons */}
-              <div className="flex flex-col md:flex-row w-full md:w-fit md:items-center gap-2">
+              <div className="generate-random flex flex-col md:flex-row w-full md:w-fit md:items-center gap-2">
                 <button
                   onClick={generateRandomColor}
                   tabIndex={0}
@@ -375,9 +380,9 @@ const App = () => {
             role="document"
           >
             <div
-              className={`absolute top-0 left-0 w-full h-full z-10 opacity-5`}
+              className={`absolute top-0 left-0 w-full h-full z-10 opacity-10`}
               style={{
-                backgroundImage: `linear-gradient(to bottom right, #000, ${deferredBaseColor})`,
+                backgroundImage: `radial-gradient(circle, #00000047 0%, ${deferredBaseColor} 50%)`,
               }}
             ></div>
 
@@ -399,12 +404,30 @@ const App = () => {
 
             {/* Modal Body */}
             <div className="relative z-20">
-              <p className="text-gray-700 mt-3 mb-6 text-sm dark:text-black-pearl-50 text-pretty">
-                Add your custom colors under the <code className="font-mono">@theme</code> directive
-                in your stylesheet.
+              <p className="text-gray-700 mt-3 mb-6 text-base dark:text-black-pearl-50 text-pretty">
+                Add your custom colors under the{" "}
+                <a
+                  href="https://tailwindcss.com/docs/functions-and-directives#theme-directive"
+                  target="_blank"
+                >
+                  <code
+                    className={`p-1.5 py-1.5 rounded-md font-mono`}
+                    style={{
+                      backgroundColor: `${deferredBaseColor}20`,
+                    }}
+                  >
+                    @theme
+                  </code>
+                </a>{" "}
+                directive in your stylesheet.
               </p>
               <div className="relative">
-                <pre className="bg-gray-900 dark:bg-bunker-900/45 text-cod-gray-100 p-6 lg:pl-2 rounded-lg overflow-x-auto text-sm font-mono whitespace-pre-wrap max-h-96">
+                <pre
+                  className="bg-gray-900 dark:bg-bunker-900/45 text-cod-gray-100 p-6 lg:pl-2 rounded-lg overflow-x-auto text-sm font-mono whitespace-pre-wrap max-h-96"
+                  style={{
+                    backgroundColor: `${deferredBaseColor}25`,
+                  }}
+                >
                   {exportCode}
                 </pre>
                 <button
