@@ -55,7 +55,6 @@ const getClosestColorName = (hex: string): string => {
 
 const App = () => {
   const [baseColor, setBaseColor] = useState("#6366f1");
-  const [baseDarkenColor, setbaseDarkenColor] = useState("#6366f1");
   const [inputValue, setInputValue] = useState("#6366f1");
   const [copiedColor, setCopiedColor] = useState<string | null>(null);
   const [showExportModal, setShowExportModal] = useState(false);
